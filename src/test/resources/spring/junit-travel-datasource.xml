@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+    <!-- Product Master -->
+	<bean id="productDataSourceMaster" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${junit.db.driver}" />
+        <property name="url" value="${junit.productMaster.url}" />
+        <property name="username" value="${junit.productMaster.username}" />
+        <property name="password" value="${junit.productMaster.password}" />
+        <property name="defaultAutoCommit" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+        <property name="initialSize" value="1" />
+        <property name="maxIdle" value="2" />
+        <property name="minIdle" value="2" />
+        <property name="testOnBorrow" value="false" />
+        <property name="validationQuery" value="select 1" />
+        <property name="timeBetweenEvictionRunsMillis" value="10000" />
+        <property name="testWhileIdle" value="true" />
+        <property name="numTestsPerEvictionRun" value="3" />
+        <property name="minEvictableIdleTimeMillis" value="-1" />
+    </bean>
+
+	<bean id="productSqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="productDataSourceMaster" />
+		<property name="configLocation" value="file:src/main/webapp/WEB-INF/config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+	</bean>
+	
+	<bean id="productSqlSessionMaster" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="productSqlSessionFactoryMaster" />
+	</bean>
+	
+	<!-- Product Slave -->
+	<bean id="productDataSourceSlave" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${junit.db.driver}" />
+        <property name="url" value="${junit.productSlave.url}" />
+        <property name="username" value="${junit.productSlave.username}" />
+        <property name="password" value="${junit.productSlave.password}" />
+        <property name="defaultAutoCommit" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+        <property name="initialSize" value="1" />
+        <property name="maxIdle" value="2" />
+        <property name="minIdle" value="2" />
+        <property name="testOnBorrow" value="false" />
+        <property name="validationQuery" value="select 1" />
+        <property name="timeBetweenEvictionRunsMillis" value="10000" />
+        <property name="testWhileIdle" value="true" />
+        <property name="numTestsPerEvictionRun" value="3" />
+        <property name="minEvictableIdleTimeMillis" value="-1" />
+    </bean>
+	
+	<bean id="productSqlSessionFactorySlave" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="productDataSourceSlave" />
+		<property name="configLocation" value="file:src/main/webapp/WEB-INF/config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+	</bean>	
+	
+	<bean id="productSqlSessionSlave" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="productSqlSessionFactorySlave" />
+	</bean>
+	
+	<!-- Payment Master -->
+	<bean id="paymentDataSourceMaster" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${junit.db.driver}" />
+        <property name="url" value="${junit.paymentMaster.url}" />
+        <property name="username" value="${junit.paymentMaster.username}" />
+        <property name="password" value="${junit.paymentMaster.password}" />
+        <property name="defaultAutoCommit" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+        <property name="initialSize" value="1" />
+        <property name="maxIdle" value="2" />
+        <property name="minIdle" value="2" />
+        <property name="testOnBorrow" value="false" />
+        <property name="validationQuery" value="select 1" />
+        <property name="timeBetweenEvictionRunsMillis" value="10000" />
+        <property name="testWhileIdle" value="true" />
+        <property name="numTestsPerEvictionRun" value="3" />
+        <property name="minEvictableIdleTimeMillis" value="-1" />
+    </bean>
+	
+	<bean id="paymentSqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="paymentDataSourceMaster" />
+		<property name="configLocation" value="file:src/main/webapp/WEB-INF/config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+	</bean>
+	
+	<bean id="paymentSqlSessionMaster" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="paymentSqlSessionFactoryMaster" />
+	</bean>
+	
+	<!-- Payment Slave -->
+	<bean id="paymentDataSourceSlave" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${junit.db.driver}" />
+        <property name="url" value="${junit.paymentSlave.url}" />
+        <property name="username" value="${junit.paymentSlave.username}" />
+        <property name="password" value="${junit.paymentSlave.password}" />
+        <property name="defaultAutoCommit" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+        <property name="initialSize" value="1" />
+        <property name="maxIdle" value="2" />
+        <property name="minIdle" value="2" />
+        <property name="testOnBorrow" value="false" />
+        <property name="validationQuery" value="select 1" />
+        <property name="timeBetweenEvictionRunsMillis" value="10000" />
+        <property name="testWhileIdle" value="true" />
+        <property name="numTestsPerEvictionRun" value="3" />
+        <property name="minEvictableIdleTimeMillis" value="-1" />
+    </bean>
+	
+	<bean id="paymentSqlSessionFactorySlave" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="paymentDataSourceSlave" />
+		<property name="configLocation" value="file:src/main/webapp/WEB-INF/config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+	</bean>	
+	
+	<bean id="paymentSqlSessionSlave" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="paymentSqlSessionFactorySlave" />
+	</bean>
+	
+	<!-- product -->
+    <bean id="productUserSqlSessionMaster" name="productUserSqlSessionMaster"
+		class="travel.config.mybatis.ProductUserSqlSessionMaster">
+		<constructor-arg index="0" ref="productSqlSessionMaster" />
+	</bean>
+	
+	<bean id="productUserSqlSessionMasterSelect" name="productUserSqlSessionMasterSelect"
+			class="travel.config.mybatis.ProductUserSqlSessionMasterSelect">
+		<constructor-arg index="0" ref="productSqlSessionMaster" />
+	</bean>
+	
+	<bean id="productUserSqlSessionSlave" name="productUserSqlSessionSlave"
+			class="travel.config.mybatis.ProductUserSqlSessionSlave">
+		<constructor-arg index="0" ref="productSqlSessionSlave" />
+	</bean>
+	
+	<!-- payment -->
+	<bean id="paymentUserSqlSessionMaster" name="paymentUserSqlSessionMaster"
+		class="travel.config.mybatis.PaymentUserSqlSessionMaster">
+		<constructor-arg index="0" ref="paymentSqlSessionMaster" />
+	</bean>
+	
+	<bean id="paymentUserSqlSessionMasterSelect" name="paymentUserSqlSessionMasterSelect"
+		class="travel.config.mybatis.PaymentUserSqlSessionMasterSelect">
+		<constructor-arg index="0" ref="paymentSqlSessionMaster" />
+	</bean>
+	
+	<bean id="paymentUserSqlSessionSlave" name="paymentUserSqlSessionSlave"
+		class="travel.config.mybatis.PaymentUserSqlSessionSlave">
+		<constructor-arg index="0" ref="paymentSqlSessionSlave" />
+	</bean>
+	
+	<!-- product db용도별 접속을 위한 factory -->
+	<bean id="productUserSqlSessionFactory" name="productUserSqlSessionFactory"
+			class="travel.config.mybatis.ProductUserSqlSessionFactory">
+		<constructor-arg index="0" ref="productUserSqlSessionMaster" />
+		<constructor-arg index="1" ref="productUserSqlSessionSlave" />
+		<constructor-arg index="2" ref="productUserSqlSessionMasterSelect" />
+	</bean>
+	
+	<!-- payment db용도별 접속을 위한 factory -->
+	<bean id="paymentUserSqlSessionFactory" name="paymentUserSqlSessionFactory"
+			class="travel.config.mybatis.PaymentUserSqlSessionFactory">
+		<constructor-arg index="0" ref="paymentUserSqlSessionMaster" />
+		<constructor-arg index="1" ref="paymentUserSqlSessionSlave" />
+		<constructor-arg index="2" ref="paymentUserSqlSessionMasterSelect" />
+	</bean>
+
+</beans>

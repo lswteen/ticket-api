@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ 
+    <!-- dev logback -->
+	<if condition='"${env.type}".equals("dev")'>
+		<then>
+    		<include resource="logback/logback-dev.xml" />
+    	</then>
+    </if>
+    
+    <!-- qa logback  -->
+    <if condition='"${env.type}".equals("stg")'>
+		<then>
+    		<include resource="logback/logback-stg.xml" />
+    	</then>
+    </if>
+    
+    <!-- pre-prod logback -->
+    <if condition='"${env.type}".equals("pre-prod")'>
+		<then>
+    		<include resource="logback/logback-pre-prod.xml" />
+    	</then>
+    </if>
+   
+    <!-- prod logback -->
+    <if condition='"${env.type}".equals("prod")'>
+		<then>
+    		<include resource="logback/logback-prod.xml" />
+    	</then>
+    </if>
+    
+ 
+</configuration>

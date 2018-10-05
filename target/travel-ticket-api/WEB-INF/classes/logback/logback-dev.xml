@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+	<property name="mybatisLogFile"
+		value="${jboss.server.log.dir}/${env.type}-mybatis.log" />
+	<property name="wsysLogFile"
+		value="${jboss.server.log.dir}/${env.type}-wmplog.log" />
+	<property name="wsysErrorLogFile"
+		value="${jboss.server.log.dir}/${env.type}-wmplog-error.log" />
+	<property name="apiLogFile"
+			  value="${jboss.server.log.dir}/${env.type}-api.log" />
+
+	<!-- Concole Log -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} [%file:%line] - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Spring Log -->
+	<appender name="SYS"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${jboss.server.log.dir}/spring-log.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${jboss.server.log.dir}/spring-log.log.%d{yyyyMMdd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date %level %logger{10} [%file:%line] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Mybatis Log -->
+	<appender name="MYBATIS"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${mybatisLogFile}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${mybatisLogFile}.%d{yyyyMMdd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date %level %logger{36} [%file:%line] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="WSYS-ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${wsysErrorLogFile}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${wsysErrorLogFile}.%d{yyyyMMdd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date %level %logger{10} [%file:%line] %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+	</appender>
+
+
+	<!-- 패키지 Log -->
+	<appender name="WSYS"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${wsysLogFile}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${wsysLogFile}.%d{yyyyMMdd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date %level %logger{10} [%file:%line] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="API"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${apiLogFile}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${apiLogFile}.%d{yyyyMMddHH}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="sql" level="DEBUG" additivity="false">
+		<appender-ref ref="MYBATIS" />
+		<appender-ref ref="WSYS-ERROR" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+		
+	<logger name="org.springframework.web" level="INFO" additivity="false">
+		<appender-ref ref="WSYS" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="org.springframework.jdbc" level="DEBUG" additivity="false">
+		<appender-ref ref="WSYS" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="org.apache.ibatis" level="DEBUG" additivity="false">
+		<appender-ref ref="WSYS" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="org.mybatis" level="DEBUG" additivity="false">
+		<appender-ref ref="WSYS" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="travel.api" level="INFO" additivity="false">
+        <appender-ref ref="API" />
+    </logger>
+    </included>

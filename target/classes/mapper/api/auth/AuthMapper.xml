@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sql.auth">
+
+    <insert id="insertAuth" parameterType="ticket.auth" useGeneratedKeys="true" keyProperty="apiKeyId">
+        <![CDATA[
+        INSERT /* AuthDao.insertAuth | 티켓 인증키 생성 | 2017.04.03 */
+            INTO ext_api_auth
+            (
+              api_key_id,
+              company_id,
+              company_name,
+              south_bound_url,
+              south_bound_token,
+              api_key_type,
+              api_key,
+              create_id,
+              create_date,
+              modify_id,
+              modify_date
+            )VALUES(
+              #{apiKeyId},
+              #{companyId},
+              #{companyName},
+              #{southBoundUrl},
+              #{southBoundToken},
+              #{apiKeyType},
+              #{apiKey},
+              #{createId},
+              NOW(),
+              #{modifyId},
+              NOW()
+            )
+        ]]>
+    </insert>
+
+    <insert id="insertIpRule" parameterType="ticket.auth">
+      <![CDATA[
+      INSERT /* AuthDao.insertIpRule | 인증키 화이트리스트 IP 등록 | 2017.04.03 */
+          INTO ext_api_ip_rule
+          (
+            api_key_id,
+            allow_ip,
+            create_id,
+            create_date,
+            modify_id,
+            modify_date
+          )VALUES(
+            #{apiKeyId},
+            #{allowIp},
+            #{createId},
+            NOW(),
+            #{modifyId},
+            NOW()
+          )
+      ]]>
+    </insert>
+
+    <insert id="insertRefererRule" parameterType="ticket.auth">
+      <![CDATA[
+      INSERT /* AuthDao.insertRefererRule | 인증키 화이트리스트 REFERER 등록 | 2017.04.03 */
+          INTO ext_api_referer_rule
+          (
+            api_key_id,
+            referer,
+            create_id,
+            create_date,
+            modify_id,
+            modify_date
+          )VALUES(
+            #{apiKeyId},
+            #{referer},
+            #{createId},
+            NOW(),
+            #{modifyId},
+            NOW()
+          )
+      ]]>
+    </insert>
+
+    <insert id="insertScopeRule" parameterType="ticket.auth">
+        <![CDATA[
+      INSERT /* AuthDao.insertScopeRule| 인증키 Scope 등록 | 2017.06.21 */
+          INTO ext_api_scope_rule
+          (
+            api_key_id,
+            scope,
+            create_id,
+            create_date,
+            modify_id,
+            modify_date
+          )VALUES(
+            #{apiKeyId},
+            #{scope},
+            #{createId},
+            NOW(),
+            #{modifyId},
+            NOW()
+          )
+      ]]>
+    </insert>
+
+    <update id="updateAuth" parameterType="ticket.auth" >
+       <![CDATA[
+       UPDATE /* AuthDao.updateAuth | 티켓 인증키 수정 | 2017.04.03 */
+        ext_api_auth SET
+            modify_date = NOW()
+       ]]>
+            <if test="companyId != null and companyId !='' ">
+                ,company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName !='' ">
+                ,company_name = #{companyName}
+            </if>
+            <if test="southBoundUrl != null and southBoundUrl !='' ">
+                ,south_bound_url = #{southBoundUrl}
+            </if>
+            <if test="southBoundToken != null and southBoundToken !='' ">
+                ,south_bound_token = #{southBoundToken}
+            </if>
+            <if test="apiKeyType != null and apiKeyType !='' ">
+                ,api_key_type = #{apiKeyType}
+            </if>
+            <if test="apiKey != null and apiKey !='' ">
+                ,api_key = #{apiKey}
+            </if>
+            <if test="modifyId != null and modifyId !='' ">
+                ,modify_id = #{modifyId}
+            </if>
+        <![CDATA[
+        WHERE
+          api_key_id = #{apiKeyId}
+        ]]>
+    </update>
+
+    <update id="updateIpRule" parameterType="ticket.auth">
+        <![CDATA[
+        UPDATE /* AuthDao.updateIpRule | 티켓 IP RULE 수정 | 2017.04.03 */
+        ext_api_ip_rule SET
+          modify_date = NOW()
+        ]]>
+        <if test="allowIp != null and allowIp !='' ">
+            ,allow_ip = #{allowIp}
+        </if>
+        <if test="modifyId != null and modifyId !='' ">
+            ,modify_id = #{modifyId}
+        </if>
+        WHERE
+          api_key_id = #{apiKeyId}
+    </update>
+
+    <update id="updateRefererRule" parameterType="ticket.auth">
+      UPDATE /* AuthDao.updateRefererRule | 티켓 REFERER RULE 수정 | 2017.04.03 */
+        ext_api_referer_rule SET
+        <if test="referer != null and referer !='' ">
+            referer = #{referer},
+        </if>
+        <if test="modifyId != null and modifyId !='' ">
+            modify_id = #{modifyId},
+        </if>
+            modify_date = NOW()
+      WHERE
+        api_key_id = #{apiKeyId}
+    </update>
+
+    <update id="updateScopeRule" parameterType="ticket.auth">
+        <![CDATA[
+        UPDATE /* AuthDao.updateScopeRule | 티켓 Scope RULE 수정 | 2017.06.21 */
+        ext_api_scope_rule SET
+          modify_date = NOW()
+        ]]>
+        <if test="scope != null and scope !='' ">
+            ,scope = #{scope}
+        </if>
+        <if test="modifyId != null and modifyId !='' ">
+            ,modify_id = #{modifyId}
+        </if>
+        WHERE
+        api_key_id = #{apiKeyId}
+    </update>
+
+    <delete id="deleteAuth" parameterType="long">
+        DELETE /* AuthDao.deleteAuth | Auth 인증정보 삭제 | 2017.04.03 */
+          FROM ext_api_auth
+        WHERE
+          api_key_id = #{apiKeyId}
+    </delete>
+
+    <delete id="deleteIpRule" parameterType="long">
+        DELETE /* AuthDao.deleteIpRule | Auth IP Rule 삭제 | 2017.04.03 */
+          FROM ext_api_ip_rule
+        WHERE
+          api_key_id = #{apiKeyId}
+    </delete>
+
+    <delete id="deleteRefererRule" parameterType="long">
+        DELETE /* AuthDao.deleteRefererRule | Auth Referer Rule 삭제 | 2017.04.03 */
+        FROM ext_api_referer_rule
+        WHERE
+        api_key_id = #{apiKeyId}
+    </delete>
+
+    <delete id="deleteScopeRule" parameterType="long">
+        DELETE /* AuthDao.deleteScopeRule | Auth Scope Rule 삭제 | 2017.04.03 */
+        FROM ext_api_scope_rule
+        WHERE
+        api_key_id = #{apiKeyId}
+    </delete>
+
+    <resultMap id="authResultMap" type="ticket.auth">
+        <result column="api_key_id" property="apiKeyId"/>
+        <result column="company_id" property="companyId"/>
+        <result column="company_name" property="companyName"/>
+        <result column="south_bound_url" property="southBoundUrl"/>
+        <result column="south_bound_token" property="southBoundToken"/>
+        <result column="api_key_type" property="apiKeyType"/>
+        <result column="api_key" property="apiKey"/>
+        <result column="create_id" property="createId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_id" property="modifyId"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="allow_ip" property="allowIp"/>
+        <result column="referer" property="referer"/>
+        <result column="scope" property="scope"/>
+    </resultMap>
+
+    <select id="selectAuth" parameterType="ticket.auth" resultMap="authResultMap">
+        SELECT /* AuthDao.selectAuth | Auth 조회 | 2017.04.03 */
+             A.api_key_id
+            ,A.company_id
+            ,A.company_name
+            ,A.south_bound_url
+            ,A.south_bound_token
+            ,A.api_key_type
+            ,A.api_key
+            ,A.create_id
+            ,A.create_date
+            ,A.modify_id
+            ,A.modify_date
+            ,B.allow_ip
+            ,C.referer
+            ,D.scope
+        FROM
+          ext_api_auth A
+            LEFT JOIN ext_api_ip_rule B ON A.api_key_id  = B.api_key_id
+            LEFT JOIN ext_api_referer_rule C ON A.api_key_id  = C.api_key_id
+            LEFT JOIN ext_api_scope_rule D ON A.api_key_id = D.api_key_id
+        WHERE 1=1
+        <if test="apiKeyId != null and apiKeyId !='' ">
+            AND A.api_key_id = #{apiKeyId}
+        </if>
+        <if test="companyId != null and companyId !='' ">
+            AND A.company_id = #{companyId}
+        </if>
+        <if test="apiKey != null and apiKey !='' ">
+            AND A.api_key = #{apiKey}
+        </if>
+      ORDER BY A.api_key_id ASC
+
+    </select>
+
+    <select id="isAllowIpCheck" parameterType="long" resultType="string">
+      SELECT allow_ip FROM ext_api_ip_rule WHERE api_key_id = #{apiKeyId}
+    </select>
+
+    <select id="isRefererCheck" parameterType="long" resultType="string">
+      SELECT referer FROM ext_api_referer_rule WHERE api_key_id = #{apiKeyId}
+    </select>
+
+    <select id="isScopeCheck" parameterType="long" resultType="string">
+        SELECT scope FROM ext_api_scope_rule WHERE api_key_id = #{apiKeyId}
+    </select>
+
+    <select id="selectSouthBoundUrl" parameterType="string" resultType="ticket.auth">
+        SELECT /* selectSouthBoundUrl | External 연동 업체 도메인 조회 | sunu | */
+           south_bound_url
+          ,api_key
+          FROM ext_api_auth
+        where company_id = #{companyId}
+    </select>
+
+</mapper>

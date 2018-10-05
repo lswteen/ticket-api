@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+	<mvc:default-servlet-handler />
+	<mvc:annotation-driven />
+	<aop:aspectj-autoproxy />
+	<aop:config proxy-target-class="true" />
+	<context:annotation-config />
+	
+	<task:annotation-driven executor="exceptionHandlingTaskExecutor" scheduler="defaultTaskScheduler" />
+	<beans:bean id="exceptionHandlingTaskExecutor" class="travel.config.exception.HandlingAsyncTaskExecutor">
+		<beans:constructor-arg ref="defaultTaskExecutor" />
+	</beans:bean>
+	<task:executor id="defaultTaskExecutor" pool-size="5" />
+	<task:scheduler id="defaultTaskScheduler" pool-size="1" />
+
+	<context:component-scan base-package="travel" />
+	
+	<context:property-placeholder location="classpath:properties/dev.travel.properties" order="1" ignore-unresolvable="true" />
+	<context:property-placeholder location="classpath:spring/junit.properties" order="2" ignore-unresolvable="true" />
+	
+	<beans:bean id="jacksonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></beans:bean>
+	<beans:bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<beans:property name="messageConverters">
+			<beans:list>
+				<beans:ref bean="jacksonMessageConverter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	
+</beans:beans>

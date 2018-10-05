@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- myBATIS Master -->
+	<bean id="productDataSourceMaster" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:jboss/datasources/ProductMasterDS" />
+	</bean>
+
+	<bean id="productSqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="productDataSourceMaster" />
+		<property name="configLocation"
+				  value="WEB-INF/config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+	</bean>
+	<bean id="productSqlSessionMaster" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="productSqlSessionFactoryMaster" />
+	</bean>
+
+	<!-- myBATIS Slave -->
+	<bean id="productDataSourceSlave" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:jboss/datasources/ProductSlaveDS" />
+	</bean>
+
+	<bean id="productSqlSessionFactorySlave" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="productDataSourceSlave" />
+		<property name="configLocation"
+				  value="WEB-INF/config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+	</bean>
+
+	<bean id="productSqlSessionSlave" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="productSqlSessionFactorySlave" />
+	</bean>
+
+	<bean id="productUserSqlSessionMaster" name="productUserSqlSessionMaster"
+		  class="travel.config.mybatis.ProductUserSqlSessionMaster">
+		<constructor-arg index="0" ref="productSqlSessionMaster" />
+	</bean>
+
+	<bean id="productUserSqlSessionMasterSelect" name="productUserSqlSessionMasterSelect"
+		  class="travel.config.mybatis.ProductUserSqlSessionMasterSelect">
+		<constructor-arg index="0" ref="productSqlSessionMaster" />
+	</bean>
+
+	<bean id="productUserSqlSessionSlave" name="productUserSqlSessionSlave"
+		  class="travel.config.mybatis.ProductUserSqlSessionSlave">
+		<constructor-arg index="0" ref="productSqlSessionSlave" />
+	</bean>
+
+	<!-- db용도별 접속을 위한 factory -->
+	<bean id="productUserSqlSessionFactory" name="productUserSqlSessionFactory"
+		  class="travel.config.mybatis.ProductUserSqlSessionFactory">
+		<constructor-arg index="0" ref="productUserSqlSessionMaster" />
+		<constructor-arg index="1" ref="productUserSqlSessionSlave" />
+		<constructor-arg index="2" ref="productUserSqlSessionMasterSelect" />
+	</bean>
+
+	<bean id="txManager"
+		  class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="transactionManagerName" value="java:jboss/TransactionManager" />
+		<property name="userTransactionName" value="java:jboss/UserTransaction" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="txManager" />
+	<tx:jta-transaction-manager />
+
+</beans>

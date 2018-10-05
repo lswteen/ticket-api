@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sql.ticket">
+    <select id="getCompanyOption" parameterType="string" resultType="string">
+        SELECT /* getCompanyOption | 대행사 옵션상품 정보 | 2017.10.26 */
+          company_product_code
+        FROM option_info WHERE option_id = #{optionId}
+    </select>
+
+    <select id="getWeMakePriceOption" parameterType="string" resultType="string">
+        SELECT /* getWeMakePriceOption | 위메프 옵션상품 정보 | 2017.10.26 */
+          option_id
+        FROM option_info WHERE company_product_code = #{companyProductCode}
+    </select>
+</mapper>
